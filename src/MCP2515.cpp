@@ -430,7 +430,7 @@ CAN_FRAME MCP2515::ReadBuffer(uint8_t buffer) {
   uint8_t byte4 = SPI.transfer(0x00); // RXBnEID0
   uint8_t byte5 = SPI.transfer(0x00); // RXBnDLC
 
-  message.extended = (byte2 & B00001000);
+  message.extended = bool(byte2 & B00001000);
 
   if(message.extended) {
     message.id = (byte1>>3);
@@ -441,7 +441,7 @@ CAN_FRAME MCP2515::ReadBuffer(uint8_t buffer) {
     message.id = ((byte1>>5)<<8) | ((byte1<<3) | (byte2>>5));
   }
 
-  message.rtr=(byte5 & B01000000);
+  message.rtr=bool(byte5 & B01000000);
   message.length = (byte5 & B00001111);  // Number of data bytes
   for(int i=0; i<message.length; i++) {
     message.data.byte[i] = SPI.transfer(0x00);
